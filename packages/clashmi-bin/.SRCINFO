@@ -1,6 +1,6 @@
 pkgbase = clashmi-bin
 	pkgdesc = Clash.Meta GUI for Android, iOS, macOS and Windows
-	pkgver = 1.0.27.1301
+	pkgver = 1.0.28.1404
 	pkgrel = 1
 	url = https://github.com/KaringX/clashmi
 	arch = x86_64
@@ -12,7 +12,7 @@ pkgbase = clashmi-bin
 	depends = libsecret
 	provides = clashmi
 	conflicts = clashmi
-	source = clashmi-1.0.27.1301_linux_amd64.deb::https://github.com/KaringX/clashmi/releases/download/v1.0.27.1301/clashmi_1.0.27.1301_linux_amd64.deb
-	sha512sums = 456574201ba5d680bf70f86f333531d516553e4897eb536765246698b2fb520150cb6adf631ea99ad7e3260d52081bdb237552bc027bfb2a8006c4414735e4fd
+	source = clashmi-1.0.28.1404_linux_amd64.deb::https://github.com/KaringX/clashmi/releases/download/v1.0.28.1404/clashmi_1.0.28.1404_linux_amd64.deb
+	sha512sums = 8d43d75d93bde180fb2aff40e96e711f8dae54a6760a58f41083e9fe95fbb3db8dbe63e8d203d67f84147e7c60a04dc98527f802b5b7eb884b9188af4d4172fa
 
 pkgname = clashmi-bin
