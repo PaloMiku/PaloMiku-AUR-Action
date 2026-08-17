@@ -2,15 +2,15 @@
 
 set -euo pipefail
 
-if [ -z "${GITHUB_OUTPUT:-}" ]; then
-  echo "GITHUB_OUTPUT is required" >&2
-  exit 1
-fi
-
+# 退出码约定（--single 模式）：
+#   0 = 上游有新版本，PKGBUILD 已更新
+#   2 = 上游无新版本（或无匹配 release），无需更新
+#   1 = 处理失败（下载 404、API 异常等），由父进程还原并跳过
 PACKAGES_DIR="packages"
 GITHUB_API="https://api.github.com/repos"
+AUR_RPC_URL="https://aur.archlinux.org/rpc/v5/info"
 GITHUB_TOKEN_HEADER=()
-CURL_RETRY_ARGS=(--retry 3 --retry-all-errors --retry-delay 2)
+CURL_RETRY_ARGS=(--retry 3 --retry-delay 2)
 DRY_RUN="${DRY_RUN:-false}"
 
 if [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -21,10 +21,18 @@ log() {
   printf '[detect-updates] %s\n' "$*" >&2
 }
 
+emit_warning() {
+  log "WARNING: $*"
+  if [ -n "${GITHUB_ACTIONS:-}" ]; then
+    printf '::warning title=detect-updates::%s\n' "$*" >&2
+  fi
+}
+
 write_output() {
   local any_update="$1"
   local packages_json="$2"
   local updates_json="$3"
+  local failed_json="$4"
 
   {
     echo "any_update=${any_update}"
@@ -33,6 +41,9 @@ write_output() {
     echo "EOF"
     echo "updates_json<<EOF"
     printf '%s\n' "$updates_json"
+    echo "EOF"
+    echo "failed_packages<<EOF"
+    printf '%s\n' "$failed_json"
     echo "EOF"
   } >> "$GITHUB_OUTPUT"
 }
@@ -234,10 +245,9 @@ select_release_json() {
   esac
 }
 
-updated_packages=()
-updated_versions=()
-
-while IFS= read -r metadata_file; do
+process_single_package() {
+  local metadata_file="$1"
+  local package_dir pkgbuild_file
   package_dir=$(dirname "$metadata_file")
   pkgbuild_file="${package_dir}/PKGBUILD"
 
@@ -259,7 +269,7 @@ while IFS= read -r metadata_file; do
   release_json=$(select_release_json "$release_strategy" "$repo" "$allow_prerelease" "$tag_pattern")
   if [ -z "$release_json" ] || [ "$release_json" = "null" ]; then
     log "No matching release found for ${pkgname}"
-    continue
+    exit 2
   fi
 
   latest_tag=$(printf '%s' "$release_json" | jq -r '.tag_name')
@@ -283,13 +293,142 @@ while IFS= read -r metadata_file; do
       update_source_entry "$pkgname" "$pkgbuild_file" "$latest_pkgver" "$source_tag" "$source_field" "$source_template" "$checksum_field"
     fi
 
-    updated_packages+=("$pkgname")
-    updated_versions+=("$latest_pkgver")
     echo "${pkgname} update: ${current_pkgver} -> ${latest_pkgver}"
-  else
-    echo "${pkgname} already latest: ${current_pkgver}"
+    echo "__NEW_PKGVER__=${latest_pkgver}"
+    exit 0
   fi
+
+  echo "${pkgname} already latest: ${current_pkgver}"
+  exit 2
+}
+
+if [ "${1:-}" = "--single" ]; then
+  if [ "$#" -ne 2 ] || [ ! -f "$2" ]; then
+    echo "usage: $0 --single <package.json>" >&2
+    exit 1
+  fi
+  process_single_package "$2"
+fi
+
+if [ -z "${GITHUB_OUTPUT:-}" ]; then
+  echo "GITHUB_OUTPUT is required" >&2
+  exit 1
+fi
+
+# 查询 AUR RPC，填充 aur_versions 映射（pkgname -> 去掉 pkgrel 的 pkgver）。
+declare -A aur_versions=()
+
+fetch_aur_versions() {
+  local response name version
+  local -a curl_args=()
+
+  for name in "$@"; do
+    curl_args+=(--data-urlencode "arg[]=${name}")
+  done
+
+  if ! response=$(curl -fsSL -G "${CURL_RETRY_ARGS[@]}" "${curl_args[@]}" "$AUR_RPC_URL"); then
+    return 1
+  fi
+
+  while IFS=$'\t' read -r name version; do
+    [ -n "$name" ] && aur_versions["${name}"]="${version%-*}"
+  done < <(printf '%s' "$response" | jq -r '.results[] | [.Name, .Version] | @tsv')
+}
+
+# 上游无更新时对账 AUR：发布曾失败（如 AUR 维护）会导致仓库与 AUR 漂移，
+# 这里把 AUR 落后的包重新加入发布队列，避免"already latest"永久卡死。
+reconcile_aur_version() {
+  local pkgname="$1"
+  local package_dir="$2"
+  local repo_pkgver aur_version
+
+  aur_version="${aur_versions[$pkgname]-}"
+  if [ -z "$aur_version" ]; then
+    log "No AUR version for ${pkgname} (not published yet or RPC unavailable); skipping reconciliation"
+    return 0
+  fi
+
+  repo_pkgver=$(extract_pkgver "${package_dir}/PKGBUILD")
+  if [ "$repo_pkgver" = "$aur_version" ]; then
+    return 0
+  fi
+
+  if command -v vercmp >/dev/null 2>&1; then
+    if [ "$(vercmp "$repo_pkgver" "$aur_version")" -lt 1 ]; then
+      emit_warning "AUR version ${aur_version} for ${pkgname} is not older than repo ${repo_pkgver}; possible external update, skipping republish"
+      return 0
+    fi
+  fi
+
+  log "AUR drift detected for ${pkgname}: repo=${repo_pkgver} aur=${aur_version}; queueing republish"
+  updated_packages+=("$pkgname")
+  updated_versions+=("$repo_pkgver")
+}
+
+metadata_files=()
+while IFS= read -r metadata_file; do
+  metadata_files+=("$metadata_file")
 done < <(find "$PACKAGES_DIR" -mindepth 2 -maxdepth 2 -name package.json | sort)
+
+if [ "${#metadata_files[@]}" -eq 0 ]; then
+  log "No package metadata files found."
+  write_output false '[]' '[]' '[]'
+  exit 0
+fi
+
+pkgnames=()
+for metadata_file in "${metadata_files[@]}"; do
+  pkgnames+=("$(jq -r '.pkgname' "$metadata_file")")
+done
+
+log "Reconciling AUR versions for ${#pkgnames[@]} packages"
+if ! fetch_aur_versions "${pkgnames[@]}"; then
+  emit_warning "Failed to query AUR RPC; AUR reconciliation skipped for this run"
+fi
+
+total_packages=0
+updated_packages=()
+updated_versions=()
+failed_packages=()
+
+for index in "${!metadata_files[@]}"; do
+  metadata_file="${metadata_files[$index]}"
+  pkgname="${pkgnames[$index]}"
+  package_dir=$(dirname "$metadata_file")
+  total_packages=$((total_packages + 1))
+
+  # 每个包在独立子进程中处理：单包失败（如资产 404）只丢弃该包的修改，
+  # 不再阻塞其余包的检测、提交和发布。
+  single_status=0
+  single_output=$(DRY_RUN="$DRY_RUN" GITHUB_TOKEN="${GITHUB_TOKEN:-}" bash "$0" --single "$metadata_file") || single_status=$?
+  printf '%s\n' "$single_output" >&2
+
+  case "$single_status" in
+    0)
+      updated_packages+=("$pkgname")
+      new_pkgver=$(printf '%s\n' "$single_output" | sed -nE 's/^__NEW_PKGVER__=(.+)$/\1/p' | head -n1)
+      if [ -z "$new_pkgver" ]; then
+        new_pkgver=$(extract_pkgver "${package_dir}/PKGBUILD")
+      fi
+      updated_versions+=("$new_pkgver")
+      ;;
+    2)
+      reconcile_aur_version "$pkgname" "$package_dir"
+      ;;
+    *)
+      failed_packages+=("$pkgname")
+      emit_warning "Package ${pkgname} failed to process (exit ${single_status}); skipped this run"
+      if [ "$DRY_RUN" != "true" ]; then
+        git checkout -- "${package_dir}" 2>/dev/null || log "git checkout failed for ${package_dir}"
+      fi
+      ;;
+  esac
+done
+
+if [ "$total_packages" -gt 0 ] && [ "${#failed_packages[@]}" -eq "$total_packages" ]; then
+  log "All ${total_packages} packages failed; aborting"
+  exit 1
+fi
 
 if [ "${#updated_packages[@]}" -gt 0 ]; then
   any_update=true
@@ -298,14 +437,16 @@ else
 fi
 
 packages_json=$(printf '%s\n' "${updated_packages[@]:-}" | jq -R . | jq -cs 'map(select(length > 0))')
+failed_json=$(printf '%s\n' "${failed_packages[@]:-}" | jq -R . | jq -cs 'map(select(length > 0))')
 updates_json=$(jq -cn --argjson pkgs "$packages_json" --argjson vers "$(printf '%s\n' "${updated_versions[@]:-}" | jq -R . | jq -cs 'map(select(length > 0))')" '
   [range(0; ($pkgs|length)) | {pkgname: $pkgs[.], latest: $vers[.], path: ("packages/" + $pkgs[.])}]
 ')
 
-write_output "$any_update" "$packages_json" "$updates_json"
+write_output "$any_update" "$packages_json" "$updates_json" "$failed_json"
 
 if [ "$DRY_RUN" = "true" ]; then
   log "DRY_RUN summary: any_update=${any_update}"
   log "DRY_RUN updated_packages=${packages_json}"
   log "DRY_RUN updates_json=${updates_json}"
+  log "DRY_RUN failed_packages=${failed_json}"
 fi

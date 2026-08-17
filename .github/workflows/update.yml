@@ -14,6 +14,7 @@ jobs:
       any_update: ${{ steps.detect.outputs.any_update }}
       updated_packages: ${{ steps.detect.outputs.updated_packages }}
       updates_json: ${{ steps.detect.outputs.updates_json }}
+      failed_packages: ${{ steps.detect.outputs.failed_packages }}
       updated_ref: ${{ steps.capture-ref.outputs.updated_ref }}
     steps:
       - name: Install build tools
@@ -44,6 +45,15 @@ jobs:
           rm -f "$tmp_output"
           runuser -u builder -- env GITHUB_OUTPUT="$tmp_output" GITHUB_TOKEN="$GITHUB_TOKEN" sh -lc 'cd "$GITHUB_WORKSPACE" && ./scripts/detect-updates.sh'
           cat "$tmp_output" >> "$GITHUB_OUTPUT"
+
+      - name: Report failed packages
+        if: steps.detect.outputs.failed_packages != '[]'
+        env:
+          FAILED_PACKAGES: ${{ steps.detect.outputs.failed_packages }}
+        run: |
+          for pkg in $(printf '%s' "$FAILED_PACKAGES" | jq -r '.[]'); do
+            echo "::warning title=Package update failed::${pkg} failed to process this run and was skipped"
+          done
 
       - name: Commit updated files to repository
         if: steps.detect.outputs.any_update == 'true'
@@ -94,9 +104,8 @@ jobs:
           ssh_keyscan_types: rsa,ecdsa,ed25519
 
   update-readme:
-    needs:
-      - detect-updates
-      - publish-aur
+    # 只依赖 detect-updates：README 内容来自仓库提交，AUR 发布失败（如 AUR 维护）不应阻塞 README 更新
+    needs: detect-updates
     if: needs.detect-updates.outputs.any_update == 'true'
     runs-on: ubuntu-latest
     container:
