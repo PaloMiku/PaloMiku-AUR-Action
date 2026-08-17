@@ -123,7 +123,13 @@ jobs:
           fetch-depth: 0
 
       - name: Update package READMEs
-        run: cd "$GITHUB_WORKSPACE" && ./scripts/generate-package-readme.sh
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          # checkout 写入的 safe.directory 属于宿主机 HOME；容器内 root 的 git
+          # 因仓库属主是宿主机用户而拒绝识别仓库，需要按容器视角补一份
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE" && ./scripts/generate-package-readme.sh
 
       - name: Commit README changes
         env:
@@ -134,7 +140,9 @@ jobs:
           git config --local user.name "PaloMiku Bot"
           git pull --ff-only origin "$BRANCH_NAME"
 
-          if git diff --stat --quiet packages/*/README.md 2>/dev/null; then
+          # README 含 "Last Updated" 时间戳，--quiet 会永远判定有变更；
+          # 用 --exit-code 判断，仅当真实内容变化时才提交
+          if git diff --exit-code --quiet -- packages/*/README.md; then
             echo "No README changes to commit"
             exit 0
           fi
