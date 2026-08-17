@@ -1,6 +1,6 @@
 pkgbase = clawx-bin
 	pkgdesc = Desktop interface for OpenClaw AI agents
-	pkgver = 0.5.3
+	pkgver = 0.5.4
 	pkgrel = 1
 	url = https://github.com/ValueCell-ai/ClawX
 	arch = x86_64
@@ -15,9 +15,9 @@ pkgbase = clawx-bin
 	depends = at-spi2-core
 	provides = clawx
 	conflicts = clawx
-	source_x86_64 = ClawX-0.5.3-linux-amd64.deb::https://github.com/ValueCell-ai/ClawX/releases/download/v0.5.3/ClawX-0.5.3-linux-amd64.deb
-	sha512sums_x86_64 = c690c30ad27dfc0ebc9d2bf6d7cb4c8c5032bd8ec10a5e652692b5886a79249a10d63d5952592147b5d547b974bfdb08122492b4473df0905a27c1324691c56c
-	source_aarch64 = ClawX-0.5.3-linux-arm64.deb::https://github.com/ValueCell-ai/ClawX/releases/download/v0.5.3/ClawX-0.5.3-linux-arm64.deb
-	sha512sums_aarch64 = 75d525b6b980f11e31f7e1f8bc498df04731fb7dbb24f1fd5fa9f68a6e9594527bb141bcfd70ad9183a2bf5cb0a1b4d39e8e3f68b130503fd20e6f2a253a432b
+	source_x86_64 = ClawX-0.5.4-linux-amd64.deb::https://github.com/ValueCell-ai/ClawX/releases/download/v0.5.4/ClawX-0.5.4-linux-amd64.deb
+	sha512sums_x86_64 = a4002bcffba076ef74cc78476bc43618f5a7b5297069fbafde7b693592c452aeb1db79dc3e6e30febf78096df8bc21b3d0fa0b2108d4a9c913baf5c7be3ce2e0
+	source_aarch64 = ClawX-0.5.4-linux-arm64.deb::https://github.com/ValueCell-ai/ClawX/releases/download/v0.5.4/ClawX-0.5.4-linux-arm64.deb
+	sha512sums_aarch64 = ebb6693f9fc4932412092ebdcc2c82e2fdee778ab555ccbd9dd49bfdf348af056c716f92944a5c4db320ecae11dbd052c842f211ee1ba86159c7aaa95d6650a6
 
 pkgname = clawx-bin
