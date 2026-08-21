@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `kazumi-bin` |
-| Current Version | `"2.0.7"` |
+| Current Version | `2.2.9` |
 | Upstream Repo | [Predidit/Kazumi](https://github.com/Predidit/Kazumi) |
 | Release Strategy | `github_latest` |
 | AUR Page | [kazumi-bin @ AUR](https://aur.archlinux.org/packages/kazumi-bin) |
@@ -15,7 +15,10 @@
 ## Installation
 
 ```bash
+# Using yay
 yay -S kazumi-bin
+# Using paru
+paru -S kazumi-bin
 ```
 
 ## Build
@@ -30,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/Predidit/Kazumi/releases)
 - [AUR Page](https://aur.archlinux.org/packages/kazumi-bin)
 
-Last Updated: 2026-04-19 06:19:56 +0800
+Last Updated: 2026-08-21 16:25:11 UTC

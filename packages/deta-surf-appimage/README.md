@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `deta-surf-appimage` |
-| Current Version | `"1.4.6beta0"` |
+| Current Version | `1.4.7beta0` |
 | Upstream Repo | [deta/surf](https://github.com/deta/surf) |
 | Release Strategy | `github_latest` |
 | AUR Page | [deta-surf-appimage @ AUR](https://aur.archlinux.org/packages/deta-surf-appimage) |
@@ -15,7 +15,10 @@
 ## Installation
 
 ```bash
+# Using yay
 yay -S deta-surf-appimage
+# Using paru
+paru -S deta-surf-appimage
 ```
 
 ## Build
@@ -30,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/deta/surf/releases)
 - [AUR Page](https://aur.archlinux.org/packages/deta-surf-appimage)
 
-Last Updated: 2026-04-19 06:19:56 +0800
+Last Updated: 2026-08-21 16:25:11 UTC
