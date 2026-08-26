@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `clawx-bin` |
-| Current Version | `0.5.4` |
+| Current Version | `0.5.5` |
 | Upstream Repo | [ValueCell-ai/ClawX](https://github.com/ValueCell-ai/ClawX) |
 | Release Strategy | `github_latest` |
 | AUR Page | [clawx-bin @ AUR](https://aur.archlinux.org/packages/clawx-bin) |
@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/ValueCell-ai/ClawX/releases)
 - [AUR Page](https://aur.archlinux.org/packages/clawx-bin)
 
-Last Updated: 2026-08-21 16:25:11 UTC
+Last Updated: 2026-08-26 16:43:51 UTC

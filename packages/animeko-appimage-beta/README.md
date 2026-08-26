@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `animeko-appimage-beta` |
-| Current Version | `6.0.0beta02` |
+| Current Version | `6.1.0beta01` |
 | Upstream Repo | [open-ani/animeko](https://github.com/open-ani/animeko) |
 | Release Strategy | `github_beta` |
 | AUR Page | [animeko-appimage-beta @ AUR](https://aur.archlinux.org/packages/animeko-appimage-beta) |
@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/open-ani/animeko/releases)
 - [AUR Page](https://aur.archlinux.org/packages/animeko-appimage-beta)
 
-Last Updated: 2026-08-21 16:25:11 UTC
+Last Updated: 2026-08-26 16:43:51 UTC
