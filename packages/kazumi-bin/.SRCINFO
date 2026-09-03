@@ -6,6 +6,7 @@ pkgbase = kazumi-bin
 	arch = x86_64
 	license = GPL-3.0-or-later
 	depends = libayatana-appindicator
+	depends = libayatana-indicator
 	depends = xdg-user-dirs
 	depends = webkit2gtk-4.1
 	provides = kazumi
