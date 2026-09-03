@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/hoowhoami/EchoMusic/releases)
 - [AUR Page](https://aur.archlinux.org/packages/echomusic-appimage)
 
-Last Updated: 2026-09-02 19:09:40 UTC
+Last Updated: 2026-09-03 19:02:33 UTC
