@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `kazumi-bin` |
-| Current Version | `2.3.0` |
+| Current Version | `2.3.1` |
 | Upstream Repo | [Predidit/Kazumi](https://github.com/Predidit/Kazumi) |
 | Release Strategy | `github_latest` |
 | AUR Page | [kazumi-bin @ AUR](https://aur.archlinux.org/packages/kazumi-bin) |
@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/Predidit/Kazumi/releases)
 - [AUR Page](https://aur.archlinux.org/packages/kazumi-bin)
 
-Last Updated: 2026-09-03 19:02:33 UTC
+Last Updated: 2026-09-07 19:32:32 UTC
