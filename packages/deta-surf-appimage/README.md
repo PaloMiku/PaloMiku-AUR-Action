@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/deta/surf/releases)
 - [AUR Page](https://aur.archlinux.org/packages/deta-surf-appimage)
 
-Last Updated: 2026-09-07 19:32:32 UTC
+Last Updated: 2026-09-08 19:12:00 UTC
