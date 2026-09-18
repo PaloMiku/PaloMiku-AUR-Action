@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/Predidit/Kazumi/releases)
 - [AUR Page](https://aur.archlinux.org/packages/kazumi-bin)
 
-Last Updated: 2026-09-15 19:26:50 UTC
+Last Updated: 2026-09-18 18:48:49 UTC
