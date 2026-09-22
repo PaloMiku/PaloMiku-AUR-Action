@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `clashmi-bin` |
-| Current Version | `1.0.30.1604` |
+| Current Version | `1.0.30.1605` |
 | Upstream Repo | [KaringX/clashmi](https://github.com/KaringX/clashmi) |
 | Release Strategy | `github_latest` |
 | AUR Page | [clashmi-bin @ AUR](https://aur.archlinux.org/packages/clashmi-bin) |
@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/KaringX/clashmi/releases)
 - [AUR Page](https://aur.archlinux.org/packages/clashmi-bin)
 
-Last Updated: 2026-09-20 18:26:07 UTC
+Last Updated: 2026-09-22 19:30:27 UTC
