@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/KaringX/clashmi/releases)
 - [AUR Page](https://aur.archlinux.org/packages/clashmi-bin)
 
-Last Updated: 2026-10-14 19:55:59 UTC
+Last Updated: 2026-10-18 18:25:01 UTC

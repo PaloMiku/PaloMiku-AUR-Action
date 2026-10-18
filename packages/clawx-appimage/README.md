@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/ValueCell-ai/ClawX/releases)
 - [AUR Page](https://aur.archlinux.org/packages/clawx-appimage)
 
-Last Updated: 2026-10-14 19:55:59 UTC
+Last Updated: 2026-10-18 18:25:01 UTC
