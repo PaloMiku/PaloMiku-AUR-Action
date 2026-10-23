@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/Sidenai/sidex/releases)
 - [AUR Page](https://aur.archlinux.org/packages/sidex-bin)
 
-Last Updated: 2026-10-22 19:41:20 UTC
+Last Updated: 2026-10-23 19:44:00 UTC
