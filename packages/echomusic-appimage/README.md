@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `echomusic-appimage` |
-| Current Version | `2.3.1` |
+| Current Version | `2.3.2` |
 | Upstream Repo | [hoowhoami/EchoMusic](https://github.com/hoowhoami/EchoMusic) |
 | Release Strategy | `github_latest` |
 | AUR Page | [echomusic-appimage @ AUR](https://aur.archlinux.org/packages/echomusic-appimage) |
@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/hoowhoami/EchoMusic/releases)
 - [AUR Page](https://aur.archlinux.org/packages/echomusic-appimage)
 
-Last Updated: 2026-10-23 19:44:00 UTC
+Last Updated: 2026-10-26 20:50:33 UTC
