@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Package Name | `clawx-appimage` |
-| Current Version | `0.7.0` |
+| Current Version | `0.7.1` |
 | Upstream Repo | [ValueCell-ai/ClawX](https://github.com/ValueCell-ai/ClawX) |
 | Release Strategy | `github_latest` |
 | AUR Page | [clawx-appimage @ AUR](https://aur.archlinux.org/packages/clawx-appimage) |
@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/ValueCell-ai/ClawX/releases)
 - [AUR Page](https://aur.archlinux.org/packages/clawx-appimage)
 
-Last Updated: 2026-11-22 21:27:12 UTC
+Last Updated: 2026-11-24 02:43:38 UTC
