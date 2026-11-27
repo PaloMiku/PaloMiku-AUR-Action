@@ -33,4 +33,4 @@ makepkg -si
 - [Upstream Release](https://github.com/open-ani/animeko/releases)
 - [AUR Page](https://aur.archlinux.org/packages/animeko-appimage-beta)
 
-Last Updated: 2026-11-24 02:43:38 UTC
+Last Updated: 2026-11-27 00:14:26 UTC
